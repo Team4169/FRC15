@@ -8,7 +8,10 @@ class Robot: public SampleRobot {
 	XBoxController driverController;
 
 public:
-	Robot(): myRobot(0, 1, 2, 3), driverJoystick(0), driverController(driverJoystick) {
+	Robot():
+		myRobot(0, 1, 2, 3),
+		driverJoystick(0),
+		driverController(XBoxController(driverJoystick)) {
 		myRobot.SetExpiration(0.1);
 	}
 

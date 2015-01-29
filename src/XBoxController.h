@@ -18,8 +18,6 @@ private:
 public:
 	XBoxController(Joystick joystick);
 
-
-
 	Vector2 getStick(int xId, int yId);
 
 	Vector2 getRightStickVector();

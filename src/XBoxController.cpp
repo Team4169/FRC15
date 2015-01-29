@@ -7,7 +7,7 @@ Vector2 XBoxController::getStick(int xId, int yId){
 	float x = joystick.GetRawAxis(xId);
 	float y = joystick.GetRawAxis(yId);
 
-	return Vector2::Vector2(x, y);
+	return Vector2(x, y);
 }
 
 Vector2 XBoxController::getLeftStickVector(){
@@ -20,11 +20,11 @@ Vector2 XBoxController::getRightStickVector(){
 
 /* Polar */
 PolarCoord XBoxController::getRightStickPolar(){
-	return getRightStickVector();
+	return PolarCoord(getRightStickVector());
 }
 
 PolarCoord XBoxController::getLeftStickPolar(){
-	return getLeftStickVector();
+	return PolarCoord(getLeftStickVector());
 }
 
 

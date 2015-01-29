@@ -10,12 +10,12 @@ struct Angle{
 
 	Angle operator = (Angle angle){
 		Angle::set(angle.angle);
-		return this;
+		return Angle(angle);
 	}
 
 	Angle operator = (float angle){
 		Angle::set(angle);
-		return this;
+		return Angle(angle);
 	}
 
 	operator float(){
