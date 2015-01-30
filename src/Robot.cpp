@@ -30,6 +30,8 @@ class Robot: public SampleRobot {
 	Jaguar *armsLeftMotor;
 	Jaguar *armsRightMotor;
 
+	float driveMagnitudeDampening = 0.5;
+
 public:
 	Robot():
 		myRobot(0, 1, 2, 3),
@@ -95,7 +97,7 @@ public:
 					driverLeftStick.magnitude, driverLeftStick.angle.angle,
 					driverRightStick.magnitude, driverRightStick.angle.angle);
 
-			myRobot.MecanumDrive_Polar(driverLeftStick.magnitude,
+			myRobot.MecanumDrive_Polar(driverLeftStick.magnitude * driveMagnitudeDampening,
 					driverLeftStick.angle,
 					driverRightStick.angle);//magnitude, direction, rotation
 			Wait(0.005);//wait for a motor update time
