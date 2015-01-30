@@ -30,7 +30,7 @@ class Robot: public SampleRobot {
 	Jaguar *armsLeftMotor;
 	Jaguar *armsRightMotor;
 
-	float driveMagnitudeDampening = 0.5;
+	float driveMagnitudeDampening = 0.1;
 
 public:
 	Robot():
