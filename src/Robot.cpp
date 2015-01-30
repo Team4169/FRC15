@@ -8,20 +8,31 @@ class Robot: public SampleRobot {
 	RobotDrive myRobot;
 
 	Joystick driverJoystick;
-	XBoxController driverController;
+	XBoxController *driverController;
 
 public:
 	Robot():
 		myRobot(0, 1, 2, 3),
 		driverJoystick(0) {
-		driverController = XBoxController();
+		driverController = new XBoxController();
 		myRobot.SetExpiration(0.1);
 	}
 
+	~Robot(){
+		delete driverController;
+	}
+
 	void OperatorControl(){
+		driverController->calibrate(&driverJoystick);
+
 		while (IsOperatorControl() && IsEnabled()){
-			PolarCoord driverLeftStick = driverController.getLeftStickPolar(&driverJoystick);
-			PolarCoord driverRightStick = driverController.getRightStickPolar(&driverJoystick);
+
+			if(driverController->getButton(driverController->BUTTON_START, &driverJoystick)){
+				driverController->calibrate(&driverJoystick);
+			}
+
+			PolarCoord driverLeftStick = driverController->getLeftStickPolar(&driverJoystick);
+			PolarCoord driverRightStick = driverController->getRightStickPolar(&driverJoystick);
 
 			fprintf(stdout, "Left Stick (%f, %f), Right Stick (%f, %f)",
 					driverLeftStick.magnitude, driverLeftStick.angle.angle,

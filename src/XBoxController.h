@@ -19,6 +19,7 @@ private:
 	int rightStickXId = 4;
 	int rightStickYId = 5;
 
+public:
 	/* Button Ids */
 	int BUTTON_LEFT_STICK_CLICK = 9;
 	int BUTTON_RIGHT_STICK_CLICK = 10;
@@ -34,7 +35,6 @@ private:
 	int BUTTON_BACK = 7;
 	int BUTTON_START = 8;
 
-public:
 	XBoxController();
 	XBoxController(XBoxController const&);
 
