@@ -7,7 +7,7 @@
 
 class XBoxController {
 private:
-	Joystick joystick;
+	Joystick joystick = XBoxController;
 
 	const int leftStickXId = 1;
 	const int leftStickYId = 2;
@@ -17,6 +17,7 @@ private:
 
 public:
 	XBoxController(Joystick joystick);
+	XBoxController(XBoxController const&);
 
 	Vector2 getStick(int xId, int yId);
 
