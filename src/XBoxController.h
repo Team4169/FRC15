@@ -7,24 +7,23 @@
 
 class XBoxController {
 private:
-	Joystick joystick;
+	int leftStickXId = 1;
+	int leftStickYId = 2;
 
-	const int leftStickXId = 1;
-	const int leftStickYId = 2;
-
-	const int rightStickXId = 4;
-	const int rightStickYId = 5;
+	int rightStickXId = 4;
+	int rightStickYId = 5;
 
 public:
-	XBoxController(Joystick joystick);
+	XBoxController();
+	XBoxController(XBoxController const&);
 
-	Vector2 getStick(int xId, int yId);
+	Vector2 getStick(int xId, int yId, Joystick *joystick);
 
-	Vector2 getRightStickVector();
-	Vector2 getLeftStickVector();
+	Vector2 getRightStickVector(Joystick *joystick);
+	Vector2 getLeftStickVector(Joystick *joystick);
 
-	PolarCoord getRightStickPolar();
-	PolarCoord getLeftStickPolar();
+	PolarCoord getRightStickPolar(Joystick *joystick);
+	PolarCoord getLeftStickPolar(Joystick *joystick);
 };
 
 #endif

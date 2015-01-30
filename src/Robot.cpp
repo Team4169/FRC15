@@ -2,6 +2,7 @@
 #include "XBoxController.h"
 
 class Robot: public SampleRobot {
+
 	RobotDrive myRobot;
 
 	Joystick driverJoystick;
@@ -10,15 +11,15 @@ class Robot: public SampleRobot {
 public:
 	Robot():
 		myRobot(0, 1, 2, 3),
-		driverJoystick(0),
-		driverController(XBoxController(driverJoystick)) {
+		driverJoystick(0) {
+		driverController = XBoxController();
 		myRobot.SetExpiration(0.1);
 	}
 
 	void OperatorControl(){
 		while (IsOperatorControl() && IsEnabled()){
-			PolarCoord driverLeftStick = driverController.getLeftStickPolar();
-			PolarCoord driverRightStick = driverController.getRightStickPolar();
+			PolarCoord driverLeftStick = driverController.getLeftStickPolar(&driverJoystick);
+			PolarCoord driverRightStick = driverController.getRightStickPolar(&driverJoystick);
 
 			myRobot.MecanumDrive_Polar(driverLeftStick.magnitude,
 					driverLeftStick.angle,
