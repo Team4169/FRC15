@@ -1,6 +1,8 @@
 #include "WPILib.h"
 #include "XBoxController.h"
 
+#include <iostream>
+
 class Robot: public SampleRobot {
 
 	RobotDrive myRobot;
@@ -20,6 +22,10 @@ public:
 		while (IsOperatorControl() && IsEnabled()){
 			PolarCoord driverLeftStick = driverController.getLeftStickPolar(&driverJoystick);
 			PolarCoord driverRightStick = driverController.getRightStickPolar(&driverJoystick);
+
+			fprintf(stdout, "Left Stick (%f, %f), Right Stick (%f, %f)",
+					driverLeftStick.magnitude, driverLeftStick.angle.angle,
+					driverRightStick.magnitude, driverRightStick.angle.angle);
 
 			myRobot.MecanumDrive_Polar(driverLeftStick.magnitude,
 					driverLeftStick.angle,

@@ -2,20 +2,35 @@
 
 XBoxController::XBoxController(){}
 
+void XBoxController::calibrate(Joystick *joystick){
+	Vector2 rawLeftStick = getStick(leftStickXId, leftStickYId, 0, 0, joystick);
+	Vector2 rawRightStick = getStick(rightStickXId, rightStickYId, 0, 0, joystick);
+
+	leftStickXOffset = rawLeftStick.x;
+	leftStickYOffset = rawLeftStick.y;
+
+	rightStickXOffset = rawRightStick.x;
+	rightStickYOffset = rawRightStick.y;
+}
+
+bool XBoxController::getButton(int buttonId, Joystick *joystick){
+	return joystick->GetRawButton(buttonId);
+}
+
 /* Vector */
-Vector2 XBoxController::getStick(int xId, int yId, Joystick *joystick){
-	float x = joystick->GetRawAxis(xId);
-	float y = joystick->GetRawAxis(yId);
+Vector2 XBoxController::getStick(int xId, int yId, float xOffset, float yOffset, Joystick *joystick){
+	float x = joystick->GetRawAxis(xId) - xOffset;
+	float y = joystick->GetRawAxis(yId) - yOffset;
 
 	return Vector2(x, y);
 }
 
 Vector2 XBoxController::getLeftStickVector(Joystick *joystick){
-	return getStick(leftStickXId, leftStickYId, joystick);
+	return getStick(leftStickXId, leftStickYId, leftStickXOffset, leftStickYOffset, joystick);
 }
 
 Vector2 XBoxController::getRightStickVector(Joystick *joystick){
-	return getStick(rightStickXId, rightStickYId, joystick);
+	return getStick(rightStickXId, rightStickYId, rightStickXOffset, rightStickYOffset, joystick);
 }
 
 /* Polar */
