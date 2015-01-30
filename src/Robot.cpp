@@ -4,6 +4,20 @@
 #include <iostream>
 
 class Robot: public SampleRobot {
+	/**
+	 * Motor Ports
+	 * 		0-3 Drive Motors
+	 * 			0, 1 - Left drive motors
+	 * 			2, 3 - Right drive motors
+	 *
+	 * 		4-5 Elevator Motors
+	 * 			4    - Left elevator motor
+	 * 			5    - Right elevator motor
+	 *
+	 * 		6-7 Arms Motors
+	 * 			6    - Left arm motor
+	 * 			7    - Right arm motors
+	 */
 
 	RobotDrive myRobot;
 
@@ -13,13 +27,18 @@ class Robot: public SampleRobot {
 	Victor *elevatorLeftMotor;
 	Victor *elevatorRightMotor;
 
+	Jaguar *armsLeftMotor;
+	Jaguar *armsRightMotor;
+
 public:
 	Robot():
 		myRobot(0, 1, 2, 3),
 		driverJoystick(0),
 		driverController(new XBoxController(&driverJoystick)),
 		elevatorLeftMotor(new Victor(4)),
-		elevatorRightMotor(new Victor(5)){
+		elevatorRightMotor(new Victor(5)),
+		armsLeftMotor(new Jaguar(6)),
+		armsRightMotor(new Jaguar(7)){
 		myRobot.SetExpiration(0.1);
 	}
 
