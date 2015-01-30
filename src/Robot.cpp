@@ -10,11 +10,16 @@ class Robot: public SampleRobot {
 	Joystick driverJoystick;
 	XBoxController *driverController;
 
+	Victor *elevatorLeftMotor;
+	Victor *elevatorRightMotor;
+
 public:
 	Robot():
 		myRobot(0, 1, 2, 3),
-		driverJoystick(0) {
-		driverController = new XBoxController();
+		driverJoystick(0),
+		driverController(new XBoxController()),
+		elevatorLeftMotor(new Victor(4)),
+		elevatorRightMotor(new Victor(5)){
 		myRobot.SetExpiration(0.1);
 	}
 
@@ -23,14 +28,47 @@ public:
 	}
 
 	void OperatorControl(){
-		driverController->calibrate(&driverJoystick);
+		driverController->calibrate(&driverJoystick);//Calibrate initially
 
 		while (IsOperatorControl() && IsEnabled()){
 
-			if(driverController->getButton(driverController->BUTTON_START, &driverJoystick)){
+			//Recalibrate if the Start button is pressed
+			if(driverController->getButton(XBoxController::BUTTON_START, &driverJoystick)){
 				driverController->calibrate(&driverJoystick);
 			}
 
+			//Elevator control
+			bool driverYButton = driverController->getButton(XBoxController::BUTTON_Y, &driverJoystick);
+			bool driverAButton = driverController->getButton(XBoxController::BUTTON_A, &driverJoystick);
+
+			bool driverLeftTrigger = driverController->getButton(XBoxController::BUTTON_LEFT_BUMPER, &driverJoystick);
+			bool driverRightTrigger = driverController->getButton(XBoxController::BUTTON_RIGHT_BUMPER, &driverJoystick);
+
+			if(driverYButton && !driverLeftTrigger && !driverRightTrigger){//All up
+				elevatorLeftMotor->Set(0.2);
+				elevatorRightMotor->Set(0.2);
+			} else if(driverAButton && !driverLeftTrigger && !driverRightTrigger){//All down
+				elevatorLeftMotor->Set(-0.2);
+				elevatorRightMotor->Set(-0.2);
+			} else if(driverYButton && driverLeftTrigger && !driverRightTrigger){//Left up
+				elevatorLeftMotor->Set(0.2);
+				elevatorRightMotor->Set(0);
+			} else if(driverYButton && !driverLeftTrigger && driverRightTrigger){//Right up
+				elevatorLeftMotor->Set(0);
+				elevatorRightMotor->Set(0.2);
+			} else if(driverAButton && driverLeftTrigger && !driverRightTrigger){//Left down
+				elevatorLeftMotor->Set(-0.2);
+				elevatorRightMotor->Set(0);
+			} else if(driverAButton && !driverLeftTrigger && driverRightTrigger){//Right down
+				elevatorLeftMotor->Set(0);
+				elevatorRightMotor->Set(-0.2);
+			} else {//Nothing
+				elevatorLeftMotor->Set(0);
+				elevatorRightMotor->Set(0);
+			}
+
+
+			//Drive robot
 			PolarCoord driverLeftStick = driverController->getLeftStickPolar(&driverJoystick);
 			PolarCoord driverRightStick = driverController->getRightStickPolar(&driverJoystick);
 

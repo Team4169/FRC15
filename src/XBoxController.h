@@ -21,19 +21,19 @@ private:
 
 public:
 	/* Button Ids */
-	int BUTTON_LEFT_STICK_CLICK = 9;
-	int BUTTON_RIGHT_STICK_CLICK = 10;
+	static int BUTTON_LEFT_STICK_CLICK = 9;
+	static int BUTTON_RIGHT_STICK_CLICK = 10;
 
-	int BUTTON_LEFT_BUMBPER = 5;
-	int BUTTON_RIGHT_BUMPER = 6;
+	static int BUTTON_LEFT_BUMPER = 5;
+	static int BUTTON_RIGHT_BUMPER = 6;
 
-	int BUTTON_A = 1;
-	int BUTTON_B = 2;
-	int BUTTON_X = 3;
-	int BUTTON_Y = 4;
+	static int BUTTON_A = 1;
+	static int BUTTON_B = 2;
+	static int BUTTON_X = 3;
+	static int BUTTON_Y = 4;
 
-	int BUTTON_BACK = 7;
-	int BUTTON_START = 8;
+	static int BUTTON_BACK = 7;
+	static int BUTTON_START = 8;
 
 	XBoxController();
 	XBoxController(XBoxController const&);
