@@ -7,47 +7,49 @@
 
 class XBoxController {
 private:
-	float leftStickXOffset = 0.5;
-	float leftStickYOffset = 0.5;
+	Joystick *joystick;
 
-	float rightStickXOffset = 0.5;
-	float rightStickYOffset = 0.5;
+	float leftStickXOffset;
+	float leftStickYOffset;
 
-	int leftStickXId = 1;
-	int leftStickYId = 2;
+	float rightStickXOffset;
+	float rightStickYOffset;
 
-	int rightStickXId = 4;
-	int rightStickYId = 5;
+	int leftStickXId;
+	int leftStickYId;
+
+	int rightStickXId;
+	int rightStickYId;
 
 public:
 	/* Button Ids */
-	static int BUTTON_LEFT_STICK_CLICK = 9;
-	static int BUTTON_RIGHT_STICK_CLICK = 10;
+	int BUTTON_LEFT_STICK_CLICK;
+	int BUTTON_RIGHT_STICK_CLICK;
 
-	static int BUTTON_LEFT_BUMPER = 5;
-	static int BUTTON_RIGHT_BUMPER = 6;
+	int BUTTON_LEFT_BUMPER;
+	int BUTTON_RIGHT_BUMPER;
 
-	static int BUTTON_A = 1;
-	static int BUTTON_B = 2;
-	static int BUTTON_X = 3;
-	static int BUTTON_Y = 4;
+	int BUTTON_A;
+	int BUTTON_B;
+	int BUTTON_X;
+	int BUTTON_Y;
 
-	static int BUTTON_BACK = 7;
-	static int BUTTON_START = 8;
+	int BUTTON_BACK;
+	int BUTTON_START;
 
-	XBoxController();
+	XBoxController(Joystick *joystick);
 	XBoxController(XBoxController const&);
 
-	void calibrate(Joystick *joystick);
+	void calibrate();
 
-	bool getButton(int buttonId, Joystick *joystick);
-	Vector2 getStick(int xId, int yId, float xOffset, float yOffset, Joystick *joystick);
+	bool getButton(int buttonId);
+	Vector2 getStick(int xId, int yId, float xOffset, float yOffset);
 
-	Vector2 getRightStickVector(Joystick *joystick);
-	Vector2 getLeftStickVector(Joystick *joystick);
+	Vector2 getRightStickVector();
+	Vector2 getLeftStickVector();
 
-	PolarCoord getRightStickPolar(Joystick *joystick);
-	PolarCoord getLeftStickPolar(Joystick *joystick);
+	PolarCoord getRightStickPolar();
+	PolarCoord getLeftStickPolar();
 };
 
 #endif

@@ -17,7 +17,7 @@ public:
 	Robot():
 		myRobot(0, 1, 2, 3),
 		driverJoystick(0),
-		driverController(new XBoxController()),
+		driverController(new XBoxController(&driverJoystick)),
 		elevatorLeftMotor(new Victor(4)),
 		elevatorRightMotor(new Victor(5)){
 		myRobot.SetExpiration(0.1);
@@ -28,21 +28,21 @@ public:
 	}
 
 	void OperatorControl(){
-		driverController->calibrate(&driverJoystick);//Calibrate initially
+		driverController->calibrate();//Calibrate initially
 
 		while (IsOperatorControl() && IsEnabled()){
 
 			//Recalibrate if the Start button is pressed
-			if(driverController->getButton(XBoxController::BUTTON_START, &driverJoystick)){
-				driverController->calibrate(&driverJoystick);
+			if(driverController->getButton(driverController->BUTTON_START)){
+				driverController->calibrate();
 			}
 
 			//Elevator control
-			bool driverYButton = driverController->getButton(XBoxController::BUTTON_Y, &driverJoystick);
-			bool driverAButton = driverController->getButton(XBoxController::BUTTON_A, &driverJoystick);
+			bool driverYButton = driverController->getButton(driverController->BUTTON_Y);
+			bool driverAButton = driverController->getButton(driverController->BUTTON_A);
 
-			bool driverLeftTrigger = driverController->getButton(XBoxController::BUTTON_LEFT_BUMPER, &driverJoystick);
-			bool driverRightTrigger = driverController->getButton(XBoxController::BUTTON_RIGHT_BUMPER, &driverJoystick);
+			bool driverLeftTrigger = driverController->getButton(driverController->BUTTON_LEFT_BUMPER);
+			bool driverRightTrigger = driverController->getButton(driverController->BUTTON_RIGHT_BUMPER);
 
 			if(driverYButton && !driverLeftTrigger && !driverRightTrigger){//All up
 				elevatorLeftMotor->Set(0.2);
@@ -69,8 +69,8 @@ public:
 
 
 			//Drive robot
-			PolarCoord driverLeftStick = driverController->getLeftStickPolar(&driverJoystick);
-			PolarCoord driverRightStick = driverController->getRightStickPolar(&driverJoystick);
+			PolarCoord driverLeftStick = driverController->getLeftStickPolar();
+			PolarCoord driverRightStick = driverController->getRightStickPolar();
 
 			fprintf(stdout, "Left Stick (%f, %f), Right Stick (%f, %f)",
 					driverLeftStick.magnitude, driverLeftStick.angle.angle,
