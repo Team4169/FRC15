@@ -11,8 +11,8 @@ XBoxController::XBoxController(Joystick *joystick): joystick(joystick){
 	rightStickXOffset = 0.5;
 	rightStickYOffset = 0.5;
 
-	leftStickXId = 1;
-	leftStickYId = 2;
+	leftStickXId = 0;
+	leftStickYId = 1;
 
 	rightStickXId = 4;
 	rightStickYId = 5;

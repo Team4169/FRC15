@@ -1,6 +1,8 @@
 #ifndef ANGLE_HEADER_GUARD
 #define ANGLE_HEADER_GUARD
 
+#include <math.h>
+
 struct Angle{
 	float angle;
 
@@ -36,6 +38,8 @@ struct Angle{
 		} else{
 			Angle::angle = angle;
 		}
+
+		Angle::angle = round(Angle::angle);
 	}
 };
 

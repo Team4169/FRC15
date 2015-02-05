@@ -2,6 +2,7 @@
 #include "XBoxController.h"
 
 #include <iostream>
+#include <math.h>
 
 class Robot: public SampleRobot {
 	/**
@@ -29,8 +30,6 @@ class Robot: public SampleRobot {
 
 	Jaguar *armsLeftMotor;
 	Jaguar *armsRightMotor;
-
-	float driveMagnitudeDampening = 0.1;
 
 public:
 	Robot():
@@ -93,13 +92,14 @@ public:
 			PolarCoord driverLeftStick = driverController->getLeftStickPolar();
 			PolarCoord driverRightStick = driverController->getRightStickPolar();
 
-			fprintf(stdout, "Left Stick (%f, %f), Right Stick (%f, %f)",
+			printf("Left Stick (%f, %f), Right Stick (%f, %f)\n",
 					driverLeftStick.magnitude, driverLeftStick.angle.angle,
 					driverRightStick.magnitude, driverRightStick.angle.angle);
 
-			myRobot.MecanumDrive_Polar(driverLeftStick.magnitude * driveMagnitudeDampening,
+			myRobot.MecanumDrive_Polar(driverLeftStick.magnitude,
 					driverLeftStick.angle,
-					driverRightStick.angle);//magnitude, direction, rotation
+					driverController->getRightStickVector().x);//magnitude, direction, rotation
+			//myRobot.MecanumDrive_Polar(0,0,0);
 			Wait(0.005);//wait for a motor update time
 		}
 	}
