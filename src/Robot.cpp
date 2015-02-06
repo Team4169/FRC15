@@ -41,6 +41,8 @@ public:
 		armsLeftMotor(new Jaguar(6)),
 		armsRightMotor(new Jaguar(7)){
 		myRobot.SetExpiration(0.1);
+		myRobot.SetInvertedMotor(RobotDrive::MotorType::kFrontRightMotor, true);
+		myRobot.SetInvertedMotor(RobotDrive::MotorType::kRearRightMotor, true);
 	}
 
 	~Robot(){
@@ -85,6 +87,21 @@ public:
 			} else {//Nothing
 				elevatorLeftMotor->Set(0);
 				elevatorRightMotor->Set(0);
+			}
+
+			//Arms control
+			bool driverXButton = driverController->getButton(driverController->BUTTON_X);
+			bool driverBButton = driverController->getButton(driverController->BUTTON_B);
+
+			if(driverXButton){
+				armsRightMotor->Set(-0.1);
+				armsLeftMotor->Set(0.1);
+			} else if(driverBButton){
+				armsRightMotor->Set(0.1);
+				armsLeftMotor->Set(-0.1);
+			} else {
+				armsRightMotor->Set(0);
+				armsLeftMotor->Set(0);
 			}
 
 
