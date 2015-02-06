@@ -31,6 +31,9 @@ class Robot: public SampleRobot {
 	Jaguar *armsLeftMotor;
 	Jaguar *armsRightMotor;
 
+	float elevatorMotorSpeed = 0.8;
+	float armsMotorSpeed = 0.1;
+
 public:
 	Robot():
 		myRobot(0, 1, 2, 3),
@@ -67,23 +70,23 @@ public:
 			bool driverRightTrigger = driverController->getButton(driverController->BUTTON_RIGHT_BUMPER);
 
 			if(driverYButton && !driverLeftTrigger && !driverRightTrigger){//All up
-				elevatorLeftMotor->Set(0.2);
-				elevatorRightMotor->Set(0.2);
+				elevatorLeftMotor->Set(elevatorMotorSpeed);
+				elevatorRightMotor->Set(elevatorMotorSpeed);
 			} else if(driverAButton && !driverLeftTrigger && !driverRightTrigger){//All down
-				elevatorLeftMotor->Set(-0.2);
-				elevatorRightMotor->Set(-0.2);
+				elevatorLeftMotor->Set(-1 * elevatorMotorSpeed);
+				elevatorRightMotor->Set(-1 * elevatorMotorSpeed);
 			} else if(driverYButton && driverLeftTrigger && !driverRightTrigger){//Left up
-				elevatorLeftMotor->Set(0.2);
+				elevatorLeftMotor->Set(elevatorMotorSpeed);
 				elevatorRightMotor->Set(0);
 			} else if(driverYButton && !driverLeftTrigger && driverRightTrigger){//Right up
 				elevatorLeftMotor->Set(0);
-				elevatorRightMotor->Set(0.2);
+				elevatorRightMotor->Set(elevatorMotorSpeed);
 			} else if(driverAButton && driverLeftTrigger && !driverRightTrigger){//Left down
-				elevatorLeftMotor->Set(-0.2);
+				elevatorLeftMotor->Set(-1 * elevatorMotorSpeed);
 				elevatorRightMotor->Set(0);
 			} else if(driverAButton && !driverLeftTrigger && driverRightTrigger){//Right down
 				elevatorLeftMotor->Set(0);
-				elevatorRightMotor->Set(-0.2);
+				elevatorRightMotor->Set(-1 * elevatorMotorSpeed);
 			} else {//Nothing
 				elevatorLeftMotor->Set(0);
 				elevatorRightMotor->Set(0);
@@ -94,11 +97,11 @@ public:
 			bool driverBButton = driverController->getButton(driverController->BUTTON_B);
 
 			if(driverXButton){
-				armsRightMotor->Set(-0.1);
-				armsLeftMotor->Set(0.1);
+				armsRightMotor->Set(-1 * armsMotorSpeed);
+				armsLeftMotor->Set(armsMotorSpeed);
 			} else if(driverBButton){
-				armsRightMotor->Set(0.1);
-				armsLeftMotor->Set(-0.1);
+				armsRightMotor->Set(armsMotorSpeed);
+				armsLeftMotor->Set(-1 * armsMotorSpeed);
 			} else {
 				armsRightMotor->Set(0);
 				armsLeftMotor->Set(0);
