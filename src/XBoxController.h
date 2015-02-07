@@ -15,11 +15,20 @@ private:
 	float rightStickXOffset;
 	float rightStickYOffset;
 
+	float leftTriggerOffset;
+	float rightTriggerOffset;
+
 	int leftStickXId;
 	int leftStickYId;
 
 	int rightStickXId;
 	int rightStickYId;
+
+	int leftTriggerId;
+	int rightTriggerId;
+
+	float leftTriggerButtonThreshold;
+	float rightTriggerButtonThreshold;
 
 public:
 	/* Button Ids */
@@ -28,6 +37,9 @@ public:
 
 	int BUTTON_LEFT_BUMPER;
 	int BUTTON_RIGHT_BUMPER;
+
+	int BUTTON_LEFT_TRIGGER;
+	int BUTTON_RIGHT_TRIGGER;
 
 	int BUTTON_A;
 	int BUTTON_B;
@@ -53,6 +65,10 @@ public:
 
 	bool getButton(int buttonId);
 	bool getDPad(int DpadId);
+
+	void rumbleLeft(float value);
+	void rumbleRight(float value);
+
 	Vector2 getStick(int xId, int yId, float xOffset, float yOffset);
 
 	Vector2 getRightStickVector();
@@ -60,6 +76,9 @@ public:
 
 	PolarCoord getRightStickPolar();
 	PolarCoord getLeftStickPolar();
+
+	float getLeftTrigger();
+	float getRightTrigger();
 };
 
 #endif

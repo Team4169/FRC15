@@ -96,51 +96,72 @@ public:
 				clawController->calibrate();
 			}
 
+			//Vibrator Controller
+			bool driverBackButton = driverController->getButton(driverController->BUTTON_BACK);
+			bool clawBackButton = clawController->getButton(clawController->BUTTON_BACK);
+
+			if(driverBackButton){
+				driverController->rumbleLeft(1);
+				driverController->rumbleRight(1);
+			}
+
+			if(clawBackButton){
+				clawController->rumbleLeft(1);
+				clawController->rumbleRight(1);
+			}
+
 			//Elevator control
-			bool driverYButton = driverController->getButton(driverController->BUTTON_Y);
-			bool driverAButton = driverController->getButton(driverController->BUTTON_A);
+			bool clawDPadUp = clawController->getDPad(clawController->DPAD_UP);
+			bool clawDPadDown = clawController->getDPad(clawController->DPAD_DOWN);
 
-			bool driverLeftTrigger = driverController->getButton(driverController->BUTTON_LEFT_BUMPER);
-			bool driverRightTrigger = driverController->getButton(driverController->BUTTON_RIGHT_BUMPER);
-
-			if(driverYButton && !driverLeftTrigger && !driverRightTrigger){//All up
+			if(clawDPadUp){
 				elevatorLeftMotor->Set(elevatorMotorSpeed);
 				elevatorRightMotor->Set(elevatorMotorSpeed);
-			} else if(driverAButton && !driverLeftTrigger && !driverRightTrigger){//All down
+			} else if(clawDPadDown){
 				elevatorLeftMotor->Set(-1 * elevatorMotorSpeed);
 				elevatorRightMotor->Set(-1 * elevatorMotorSpeed);
-			} else if(driverYButton && driverLeftTrigger && !driverRightTrigger){//Left up
-				elevatorLeftMotor->Set(elevatorMotorSpeed);
-				elevatorRightMotor->Set(0);
-			} else if(driverYButton && !driverLeftTrigger && driverRightTrigger){//Right up
-				elevatorLeftMotor->Set(0);
-				elevatorRightMotor->Set(elevatorMotorSpeed);
-			} else if(driverAButton && driverLeftTrigger && !driverRightTrigger){//Left down
-				elevatorLeftMotor->Set(-1 * elevatorMotorSpeed);
-				elevatorRightMotor->Set(0);
-			} else if(driverAButton && !driverLeftTrigger && driverRightTrigger){//Right down
-				elevatorLeftMotor->Set(0);
-				elevatorRightMotor->Set(-1 * elevatorMotorSpeed);
-			} else {//Nothing
-				elevatorLeftMotor->Set(0);
-				elevatorRightMotor->Set(0);
+			} else{
+				elevatorLeftMotor->StopMotor();
+				elevatorRightMotor->StopMotor();
 			}
 
 			//Arms control
-			bool driverXButton = driverController->getButton(driverController->BUTTON_X);
-			bool driverBButton = driverController->getButton(driverController->BUTTON_B);
+			bool clawDPadLeft = clawController->getDPad(clawController->DPAD_LEFT);
+			bool clawDPadRight = clawController->getDPad(clawController->DPAD_RIGHT);
 
-			if(driverXButton){
-				armsRightMotor->Set(-1 * armsMotorSpeed);
-				armsLeftMotor->Set(armsMotorSpeed);
-			} else if(driverBButton){
-				armsRightMotor->Set(armsMotorSpeed);
+			if(clawDPadLeft){
 				armsLeftMotor->Set(-1 * armsMotorSpeed);
-			} else {
-				armsRightMotor->StopMotor();
+				armsRightMotor->Set(armsMotorSpeed);
+			} else if(clawDPadRight){
+				armsLeftMotor->Set(armsMotorSpeed);
+				armsRightMotor->Set(-1 * armsMotorSpeed);
+			} else{
 				armsLeftMotor->StopMotor();
+				armsRightMotor->StopMotor();
 			}
 
+			//Arms wheel control
+			bool clawLeftBumper = clawController->getButton(clawController->BUTTON_LEFT_BUMPER);
+			bool clawRightBumper = clawController->getButton(clawController->BUTTON_RIGHT_BUMPER);
+
+			bool clawLeftTrigger = clawController->getButton(clawController->BUTTON_LEFT_TRIGGER);
+			bool clawRightTrigger = clawController->getButton(clawController->BUTTON_RIGHT_TRIGGER);
+
+			if(clawLeftBumper && !clawLeftTrigger){
+				armsWheelLeftMotor->Set(armsWheelMotorSpeed);
+			} else if(!clawLeftBumper && clawLeftTrigger){
+				armsWheelLeftMotor->Set(-1 * armsWheelMotorSpeed);
+			} else {
+				armsWheelLeftMotor->Set(0);
+			}
+
+			if(clawRightBumper && !clawRightTrigger){
+				armsWheelRightMotor->Set(armsWheelMotorSpeed);
+			} else if(!clawRightBumper && clawRightTrigger){
+				armsWheelRightMotor->Set(-1 * armsWheelMotorSpeed);
+			} else {
+				armsWheelRightMotor->Set(0);
+			}
 
 			//Drive robot
 			PolarCoord driverLeftStick = driverController->getLeftStickPolar();

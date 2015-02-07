@@ -11,11 +11,17 @@ XBoxController::XBoxController(Joystick *joystick): joystick(joystick){
 	rightStickXOffset = 0.5;
 	rightStickYOffset = 0.5;
 
+	leftTriggerOffset = 0.5;
+	rightTriggerOffset = 0.5;
+
 	leftStickXId = 0;
 	leftStickYId = 1;
 
 	rightStickXId = 4;
 	rightStickYId = 5;
+
+	leftTriggerButtonThreshold = 0.8;
+	rightTriggerButtonThreshold = 0.8;
 
 	/* Buttons */
 	BUTTON_LEFT_STICK_CLICK = 9;
@@ -23,6 +29,9 @@ XBoxController::XBoxController(Joystick *joystick): joystick(joystick){
 
 	BUTTON_LEFT_BUMPER = 5;
 	BUTTON_RIGHT_BUMPER = 6;
+
+	BUTTON_RIGHT_TRIGGER = -1;
+	BUTTON_LEFT_TRIGGER = -2;
 
 	BUTTON_A = 1;
 	BUTTON_B = 2;
@@ -46,19 +55,39 @@ void XBoxController::calibrate(){
 	Vector2 rawLeftStick = getStick(leftStickXId, leftStickYId, 0, 0);
 	Vector2 rawRightStick = getStick(rightStickXId, rightStickYId, 0, 0);
 
+	float rawLeftTrigger = joystick->GetRawAxis(leftTriggerId);
+	float rawRightTrigger = joystick->GetRawAxis(rightTriggerId);
+
 	leftStickXOffset = rawLeftStick.x;
 	leftStickYOffset = rawLeftStick.y;
 
 	rightStickXOffset = rawRightStick.x;
 	rightStickYOffset = rawRightStick.y;
+
+	leftTriggerOffset = rawLeftTrigger;
+	rightTriggerOffset = rawRightTrigger;
 }
 
 bool XBoxController::getButton(int buttonId){
-	return joystick->GetRawButton(buttonId);
+	if(buttonId == BUTTON_LEFT_TRIGGER){
+		return getLeftTrigger() >= leftTriggerButtonThreshold;
+	} else if(buttonId == BUTTON_RIGHT_TRIGGER){
+		return getRightTrigger() >= rightTriggerButtonThreshold;
+	} else {
+		return joystick->GetRawButton(buttonId);
+	}
 }
 
 bool XBoxController::getDPad(int DPadId){
 	return joystick->GetPOV(DPadId);
+}
+
+void XBoxController::rumbleLeft(float value){
+	joystick->SetRumble(Joystick::RumbleType::kLeftRumble, value);
+}
+
+void XBoxController::rumbleRight(float value){
+	joystick->SetRumble(Joystick::RumbleType::kRightRumble, value);
 }
 
 /* Vector */
@@ -77,6 +106,7 @@ Vector2 XBoxController::getRightStickVector(){
 	return getStick(rightStickXId, rightStickYId, rightStickXOffset, rightStickYOffset);
 }
 
+
 /* Polar */
 PolarCoord XBoxController::getRightStickPolar(){
 	return PolarCoord(getRightStickVector());
@@ -86,4 +116,15 @@ PolarCoord XBoxController::getLeftStickPolar(){
 	return PolarCoord(getLeftStickVector());
 }
 
+
+/* Trigger */
+float XBoxController::getLeftTrigger(){
+	float rawValue = joystick->GetRawAxis(leftTriggerId);
+	return (rawValue - leftTriggerOffset) * 2;
+}
+
+float XBoxController::getRightTrigger(){
+	float rawValue = joystick->GetRawAxis(rightTriggerId);
+	return (rawValue - rightTriggerOffset) * 2;
+}
 
