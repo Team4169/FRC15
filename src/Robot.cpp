@@ -44,6 +44,8 @@ class Robot: public SampleRobot {
 	float armsMotorSpeed = 0.15;
 	float armsWheelMotorSpeed = 0.5;
 
+	float driveLockModeValues[5];
+
 public:
 	Robot():
 		myRobot(0, 1, 2, 3),
@@ -61,7 +63,9 @@ public:
 		armsRightMotor(new Jaguar(7)),
 
 		armsWheelLeftMotor(new Jaguar(8)),
-		armsWheelRightMotor(new Jaguar(9))
+		armsWheelRightMotor(new Jaguar(9)),
+
+		driveLockModeValues({0, 90, 180, 270, 360})
 	{
 		myRobot.SetExpiration(0.1);
 		myRobot.SetInvertedMotor(RobotDrive::MotorType::kFrontRightMotor, true);
@@ -103,11 +107,17 @@ public:
 			if(driverBackButton){
 				driverController->rumbleLeft(1);
 				driverController->rumbleRight(1);
+			} else {
+				driverController->rumbleLeft(0);
+				driverController->rumbleRight(0);
 			}
 
 			if(clawBackButton){
 				clawController->rumbleLeft(1);
 				clawController->rumbleRight(1);
+			} else {
+				clawController->rumbleLeft(0);
+				clawController->rumbleRight(0);
 			}
 
 			//Elevator control
@@ -165,16 +175,43 @@ public:
 
 			//Drive robot
 			PolarCoord driverLeftStick = driverController->getLeftStickPolar();
-			PolarCoord driverRightStick = driverController->getRightStickPolar();
 
-			printf("Left Stick (%f, %f), Right Stick (%f, %f)\n",
-					driverLeftStick.magnitude, driverLeftStick.angle.angle,
-					driverRightStick.magnitude, driverRightStick.angle.angle);
+			float driveMagnitude = pow(driverLeftStick.magnitude, 2.0);
+			float driveAngle = driverLeftStick.angle;
+			float driveRotation = pow(driverController->getRightStickVector().x, 2);
 
-			myRobot.MecanumDrive_Polar(pow(driverLeftStick.magnitude, 2.0),
-					driverLeftStick.angle,
-					driverController->getRightStickVector().x);//magnitude, direction, rotation
-			//myRobot.MecanumDrive_Polar(0,0,0);
+			bool driverRightBumper = driverController->getButton(driverController->BUTTON_RIGHT_BUMPER);
+
+			if(driverRightBumper){
+				float driveLockModeDifs[5];
+
+				int i = 0;
+				for(float lockModeValue : driveLockModeValues){
+					driveLockModeDifs[i] = abs(driverLeftStick.angle - lockModeValue);
+
+					i++;
+				}
+
+				i = 0;
+				int lowestDifIndex = 0;
+				for(float lockModeDif : driveLockModeDifs){
+					if(lockModeDif < driveLockModeDifs[lowestDifIndex]){
+						lowestDifIndex = i;
+					}
+
+					i++;
+				}
+
+				driveAngle = driveLockModeValues[lowestDifIndex];
+			}
+
+			if(driverController->getRightStickVector().x < 0){
+				driveRotation *= -1;
+			}
+
+			myRobot.MecanumDrive_Polar(driveMagnitude, driveAngle, driveRotation);
+			//                              magnitude,  direction,      rotation
+
 			Wait(0.005);//wait for a motor update time
 		}
 	}
