@@ -116,7 +116,7 @@ public:
 					driverLeftStick.magnitude, driverLeftStick.angle.angle,
 					driverRightStick.magnitude, driverRightStick.angle.angle);
 
-			myRobot.MecanumDrive_Polar(driverLeftStick.magnitude,
+			myRobot.MecanumDrive_Polar(pow(driverLeftStick.magnitude, 2.0),
 					driverLeftStick.angle,
 					driverController->getRightStickVector().x);//magnitude, direction, rotation
 			//myRobot.MecanumDrive_Polar(0,0,0);
