@@ -31,6 +31,15 @@ XBoxController::XBoxController(Joystick *joystick): joystick(joystick){
 
 	BUTTON_BACK = 7;
 	BUTTON_START = 8;
+
+	DPAD_UP = 1;
+	DPAD_UP_RIGHT = 2;
+	DPAD_RIGHT = 3;
+	DPAD_DOWN_RIGHT = 4;
+	DPAD_DOWN = 5;
+	DPAD_DOWN_LEFT = 6;
+	DPAD_LEFT = 7;
+	DPAD_UP_LEFT = 8;
 }
 
 void XBoxController::calibrate(){
@@ -46,6 +55,10 @@ void XBoxController::calibrate(){
 
 bool XBoxController::getButton(int buttonId){
 	return joystick->GetRawButton(buttonId);
+}
+
+bool XBoxController::getDPad(int DPadId){
+	return joystick->GetPOV(DPadId);
 }
 
 /* Vector */

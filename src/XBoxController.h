@@ -37,12 +37,22 @@ public:
 	int BUTTON_BACK;
 	int BUTTON_START;
 
+	int DPAD_UP;
+	int DPAD_UP_RIGHT;
+	int DPAD_RIGHT;
+	int DPAD_DOWN_RIGHT;
+	int DPAD_DOWN;
+	int DPAD_DOWN_LEFT;
+	int DPAD_LEFT;
+	int DPAD_UP_LEFT;
+
 	XBoxController(Joystick *joystick);
 	XBoxController(XBoxController const&);
 
 	void calibrate();
 
 	bool getButton(int buttonId);
+	bool getDPad(int DpadId);
 	Vector2 getStick(int xId, int yId, float xOffset, float yOffset);
 
 	Vector2 getRightStickVector();

@@ -18,6 +18,9 @@ class Robot: public SampleRobot {
 	 * 		6-7 Arms Motors
 	 * 			6    - Left arm motor
 	 * 			7    - Right arm motors
+	 * 		8-9
+	 * 			8    - Left arm wheel motor
+	 * 			9    - Right arm wheel motor
 	 */
 
 	RobotDrive myRobot;
@@ -25,24 +28,41 @@ class Robot: public SampleRobot {
 	Joystick driverJoystick;
 	XBoxController *driverController;
 
+	Joystick clawJoystick;
+	XBoxController *clawController;
+
 	Victor *elevatorLeftMotor;
 	Victor *elevatorRightMotor;
 
 	Jaguar *armsLeftMotor;
 	Jaguar *armsRightMotor;
 
+	Jaguar *armsWheelLeftMotor;
+	Jaguar *armsWheelRightMotor;
+
 	float elevatorMotorSpeed = 0.8;
-	float armsMotorSpeed = 0.1;
+	float armsMotorSpeed = 0.15;
+	float armsWheelMotorSpeed = 0.5;
 
 public:
 	Robot():
 		myRobot(0, 1, 2, 3),
+
 		driverJoystick(0),
+		clawJoystick(1),
+
 		driverController(new XBoxController(&driverJoystick)),
+		clawController(new XBoxController(&clawJoystick)),
+
 		elevatorLeftMotor(new Victor(4)),
 		elevatorRightMotor(new Victor(5)),
+
 		armsLeftMotor(new Jaguar(6)),
-		armsRightMotor(new Jaguar(7)){
+		armsRightMotor(new Jaguar(7)),
+
+		armsWheelLeftMotor(new Jaguar(8)),
+		armsWheelRightMotor(new Jaguar(9))
+	{
 		myRobot.SetExpiration(0.1);
 		myRobot.SetInvertedMotor(RobotDrive::MotorType::kFrontRightMotor, true);
 		myRobot.SetInvertedMotor(RobotDrive::MotorType::kRearRightMotor, true);
@@ -50,6 +70,16 @@ public:
 
 	~Robot(){
 		delete driverController;
+		delete clawController;
+
+		delete elevatorLeftMotor;
+		delete elevatorRightMotor;
+
+		delete armsLeftMotor;
+		delete armsRightMotor;
+
+		delete armsWheelLeftMotor;
+		delete armsWheelRightMotor;
 	}
 
 	void OperatorControl(){
@@ -60,6 +90,10 @@ public:
 			//Recalibrate if the Start button is pressed
 			if(driverController->getButton(driverController->BUTTON_START)){
 				driverController->calibrate();
+			}
+
+			if(clawController->getButton(clawController->BUTTON_START)){
+				clawController->calibrate();
 			}
 
 			//Elevator control
@@ -103,8 +137,8 @@ public:
 				armsRightMotor->Set(armsMotorSpeed);
 				armsLeftMotor->Set(-1 * armsMotorSpeed);
 			} else {
-				armsRightMotor->Set(0);
-				armsLeftMotor->Set(0);
+				armsRightMotor->StopMotor();
+				armsLeftMotor->StopMotor();
 			}
 
 
