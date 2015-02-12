@@ -5,30 +5,47 @@
 #include "Vector2.h"
 #include "PolarCoord.h"
 
+/**
+ * A class to help get input from a controller.
+ * The values are currently configured for an XBox controllers. However the constants are
+ * member variables so they can be overridden for different controllers.
+ */
 class XBoxController {
 private:
-	Joystick *joystick;
+	Joystick *joystick;///The WPILib Joystick to get input from
 
+	/**
+	 * The offset for the left stick x axis on the controller. This is needed
+	 * because the resting value is 0.5f. To account for this we subtract the offset
+	 * to fix this. The controller values can also drift over the course of operation.
+	 */
 	float leftStickXOffset;
-	float leftStickYOffset;
+	float leftStickYOffset;/// See leftStickYOffset
 
-	float rightStickXOffset;
-	float rightStickYOffset;
+	float rightStickXOffset;/// See leftStickXOffset
+	float rightStickYOffset;/// see leftStickXOffset
 
+	/**
+	 * Similar to leftStickXOffset, however this if for the triggers
+	 * The triggers are treated like a single axis
+	 */
 	float leftTriggerOffset;
-	float rightTriggerOffset;
+	float rightTriggerOffset;/// See leftTriggerOffset
 
-	int leftStickXId;
-	int leftStickYId;
+	int leftStickXId;/// The raw axis id of the left stick x axis
+	int leftStickYId;/// The raw axis id of the left stick y axis
 
-	int rightStickXId;
-	int rightStickYId;
+	int rightStickXId;/// The raw axis id of the right stick x axis
+	int rightStickYId;/// The raw axis id of the right stick y axis
 
-	int leftTriggerId;
-	int rightTriggerId;
+	int leftTriggerId;/// The raw axis id of the left trigger, which is treated like an axis
+	int rightTriggerId;/// The raw axis id of the right trigger, which is treated like an axis
 
+	/**
+	 * The value the left trigger has to pass to be considered pressed when fetched as a button
+	 */
 	float leftTriggerButtonThreshold;
-	float rightTriggerButtonThreshold;
+	float rightTriggerButtonThreshold;/// Same as the leftTriggerButtonThreshold but for the right trigger
 
 public:
 	/* Button Ids */

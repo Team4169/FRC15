@@ -47,7 +47,7 @@ class Robot: public SampleRobot {
 
 	float elevatorMotorSpeed = 0.8;
 	float armsMotorSpeed = 0.15;
-	float armsWheelMotorSpeed = 0.5;
+	float armsWheelMotorSpeed = 0.25;
 
 	float driveLockModeValues[5] {0, 90, 180, 270, 360};
 
@@ -140,10 +140,10 @@ public:
 			bool clawDPadDown = clawController->getDPad(clawController->DPAD_DOWN);
 
 			if(clawDPadUp){
-				elevatorLeftMotor->Set(elevatorMotorSpeed);
+				elevatorLeftMotor->Set(-1 *elevatorMotorSpeed);
 				elevatorRightMotor->Set(elevatorMotorSpeed);
 			} else if(clawDPadDown){
-				elevatorLeftMotor->Set(-1 * elevatorMotorSpeed);
+				elevatorLeftMotor->Set(elevatorMotorSpeed);
 				elevatorRightMotor->Set(-1 * elevatorMotorSpeed);
 			} else{
 				elevatorLeftMotor->StopMotor();

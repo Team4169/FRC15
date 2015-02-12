@@ -20,6 +20,9 @@ XBoxController::XBoxController(Joystick *joystick): joystick(joystick){
 	rightStickXId = 4;
 	rightStickYId = 5;
 
+	rightTriggerId= 3;
+	leftTriggerId = 2;
+
 	leftTriggerButtonThreshold = 0.8;
 	rightTriggerButtonThreshold = 0.8;
 
