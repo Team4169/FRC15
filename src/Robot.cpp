@@ -23,13 +23,16 @@ class Robot: public SampleRobot {
 	 * 			9    - Right arm wheel motor
 	 */
 
-	RobotDrive myRobot;
-
 	Joystick driverJoystick;
-	XBoxController *driverController;
-
 	Joystick clawJoystick;
+
+	XBoxController *driverController;
 	XBoxController *clawController;
+
+	Victor *frontLeftDriveMotor;
+	Victor *backLeftDriveMotor;
+	Victor *frontRightDriveMotor;
+	Victor *backRightDriveMotor;
 
 	Victor *elevatorLeftMotor;
 	Victor *elevatorRightMotor;
@@ -40,21 +43,26 @@ class Robot: public SampleRobot {
 	Jaguar *armsWheelLeftMotor;
 	Jaguar *armsWheelRightMotor;
 
+	RobotDrive *myRobot;
+
 	float elevatorMotorSpeed = 0.8;
 	float armsMotorSpeed = 0.15;
 	float armsWheelMotorSpeed = 0.5;
 
-	float driveLockModeValues[5];
+	float driveLockModeValues[5] {0, 90, 180, 270, 360};
 
 public:
 	Robot():
-		myRobot(0, 1, 2, 3),
-
 		driverJoystick(0),
 		clawJoystick(1),
 
 		driverController(new XBoxController(&driverJoystick)),
 		clawController(new XBoxController(&clawJoystick)),
+
+		frontLeftDriveMotor(new Victor(0)),
+		backLeftDriveMotor(new Victor(1)),
+		frontRightDriveMotor(new Victor(2)),
+		backRightDriveMotor(new Victor(3)),
 
 		elevatorLeftMotor(new Victor(4)),
 		elevatorRightMotor(new Victor(5)),
@@ -65,11 +73,11 @@ public:
 		armsWheelLeftMotor(new Jaguar(8)),
 		armsWheelRightMotor(new Jaguar(9)),
 
-		driveLockModeValues({0, 90, 180, 270, 360})
+		myRobot(new RobotDrive(frontLeftDriveMotor, backLeftDriveMotor, frontRightDriveMotor, backRightDriveMotor))
 	{
-		myRobot.SetExpiration(0.1);
-		myRobot.SetInvertedMotor(RobotDrive::MotorType::kFrontRightMotor, true);
-		myRobot.SetInvertedMotor(RobotDrive::MotorType::kRearRightMotor, true);
+		myRobot->SetExpiration(0.1);
+		myRobot->SetInvertedMotor(RobotDrive::MotorType::kFrontRightMotor, true);
+		myRobot->SetInvertedMotor(RobotDrive::MotorType::kRearRightMotor, true);
 	}
 
 	~Robot(){
@@ -84,6 +92,13 @@ public:
 
 		delete armsWheelLeftMotor;
 		delete armsWheelRightMotor;
+
+		delete frontLeftDriveMotor;
+		delete frontRightDriveMotor;
+		delete backLeftDriveMotor;
+		delete backRightDriveMotor;
+
+		delete myRobot;
 	}
 
 	void OperatorControl(){
@@ -209,7 +224,7 @@ public:
 				driveRotation *= -1;
 			}
 
-			myRobot.MecanumDrive_Polar(driveMagnitude, driveAngle, driveRotation);
+			myRobot->MecanumDrive_Polar(driveMagnitude, driveAngle, driveRotation);
 			//                              magnitude,  direction,      rotation
 
 			Wait(0.005);//wait for a motor update time
