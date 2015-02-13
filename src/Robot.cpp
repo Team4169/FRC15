@@ -196,7 +196,7 @@ public:
 
 			float driveMagnitude = pow(driverLeftStick.magnitude, 2.0);
 			float driveAngle = driverLeftStick.angle;
-			float driveRotation = pow(driverController->getRightStickVector().x, 2);
+			float driveRotation = pow(driverController->getRightStickVector().x / 2, 2);
 
 			bool driverRightBumper = driverController->getButton(driverController->BUTTON_RIGHT_BUMPER);
 
