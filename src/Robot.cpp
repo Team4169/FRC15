@@ -140,12 +140,15 @@ public:
 			bool clawDPadDown = clawController->getDPad(clawController->DPAD_DOWN);
 
 			if(clawDPadUp){
+				printf("Claw up\n");
 				elevatorLeftMotor->Set(-1 *elevatorMotorSpeed);
 				elevatorRightMotor->Set(elevatorMotorSpeed);
 			} else if(clawDPadDown){
+				printf("Claw down\n");
 				elevatorLeftMotor->Set(elevatorMotorSpeed);
 				elevatorRightMotor->Set(-1 * elevatorMotorSpeed);
 			} else{
+				printf("Claw stop\n");
 				elevatorLeftMotor->StopMotor();
 				elevatorRightMotor->StopMotor();
 			}

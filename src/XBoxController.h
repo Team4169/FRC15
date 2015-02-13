@@ -118,14 +118,14 @@ public:
     * button. The method called is Joystick->GetPov().
     * @{
     */
-	int DPAD_UP;///< DPad north(0 deg) position id
-	int DPAD_UP_RIGHT;///< DPad north east(45 deg) position id
-	int DPAD_RIGHT;///< DPad east(90 deg) position id
-	int DPAD_DOWN_RIGHT;///< DPad south east(135 deg) position id
-	int DPAD_DOWN;///< DPad south(180 deg) position id
-	int DPAD_DOWN_LEFT;///< DPad south west(225 deg) position id
-	int DPAD_LEFT;///< DPad west(270 deg) position id
-	int DPAD_UP_LEFT;/// DPad north west(315 deg) position id
+	float DPAD_UP;///< DPad north(0 deg) position id
+	float DPAD_UP_RIGHT;///< DPad north east(45 deg) position id
+	float DPAD_RIGHT;///< DPad east(90 deg) position id
+	float DPAD_DOWN_RIGHT;///< DPad south east(135 deg) position id
+	float DPAD_DOWN;///< DPad south(180 deg) position id
+	float DPAD_DOWN_LEFT;///< DPad south west(225 deg) position id
+	float DPAD_LEFT;///< DPad west(270 deg) position id
+	float DPAD_UP_LEFT;/// DPad north west(315 deg) position id
     /** @} */
 
     /**
@@ -139,6 +139,11 @@ public:
     * See <a href="https://github.com/Team4169/FRC15/issues/1">the Github issue</a> for more information
     */
 	XBoxController(XBoxController const&);
+
+	/**
+	 * Class deconstructor, releases pointer for joystick
+	 */
+	~XBoxController();
 
     /**
     * @brief Calibrate the axis offsets.
@@ -199,11 +204,15 @@ public:
     */
 	Vector2 getStick(int xId, int yId, float xOffset, float yOffset);
 
+	/** @defgroup Get controller joystick values
+	 * @{
+	 */
 	Vector2 getRightStickVector();
 	Vector2 getLeftStickVector();
 
 	PolarCoord getRightStickPolar();
 	PolarCoord getLeftStickPolar();
+	/** @} */
 
 	float getLeftTrigger();
 	float getRightTrigger();
