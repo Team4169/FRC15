@@ -3,6 +3,9 @@
 
 #include <iostream>
 #include <math.h>
+#include <stdio.h>
+
+using namespace std;
 
 class Robot: public SampleRobot {
 	/**
@@ -22,6 +25,8 @@ class Robot: public SampleRobot {
 	 * 			8    - Left arm wheel motor
 	 * 			9    - Right arm wheel motor
 	 */
+
+	USBCamera *clawCamera;
 
 	Joystick driverJoystick;
 	Joystick clawJoystick;
@@ -53,6 +58,8 @@ class Robot: public SampleRobot {
 
 public:
 	Robot():
+		clawCamera(new USBCamera(USBCamera::kDefaultCameraName, false)),
+
 		driverJoystick(0),
 		clawJoystick(1),
 
@@ -78,9 +85,16 @@ public:
 		myRobot->SetExpiration(0.1);
 		myRobot->SetInvertedMotor(RobotDrive::MotorType::kFrontRightMotor, true);
 		myRobot->SetInvertedMotor(RobotDrive::MotorType::kRearRightMotor, true);
+
+		clawCamera->SetBrightness(10);
+
+		CameraServer::GetInstance()->SetQuality(100);
+		CameraServer::GetInstance()->StartAutomaticCapture(make_shared<USBCamera>(*clawCamera));
 	}
 
 	~Robot(){
+		delete clawCamera;
+
 		delete driverController;
 		delete clawController;
 
@@ -117,9 +131,12 @@ public:
 
 			//Vibrator Controller
 			bool driverBackButton = driverController->getButton(driverController->BUTTON_BACK);
-			bool clawBackButton = clawController->getButton(clawController->BUTTON_BACK);
+			bool driverAButton = driverController->getButton(driverController->BUTTON_A);
 
-			if(driverBackButton){
+			bool clawBackButton = clawController->getButton(clawController->BUTTON_BACK);
+			bool clawAButton = clawController->getButton(clawController->BUTTON_A);
+
+			if(driverBackButton || clawAButton){
 				driverController->rumbleLeft(1);
 				driverController->rumbleRight(1);
 			} else {
@@ -127,7 +144,7 @@ public:
 				driverController->rumbleRight(0);
 			}
 
-			if(clawBackButton){
+			if(clawBackButton || driverAButton){
 				clawController->rumbleLeft(1);
 				clawController->rumbleRight(1);
 			} else {
@@ -140,15 +157,12 @@ public:
 			bool clawDPadDown = clawController->getDPad(clawController->DPAD_DOWN);
 
 			if(clawDPadUp){
-				printf("Claw up\n");
 				elevatorLeftMotor->Set(-1 *elevatorMotorSpeed);
 				elevatorRightMotor->Set(elevatorMotorSpeed);
 			} else if(clawDPadDown){
-				printf("Claw down\n");
 				elevatorLeftMotor->Set(elevatorMotorSpeed);
 				elevatorRightMotor->Set(-1 * elevatorMotorSpeed);
 			} else{
-				printf("Claw stop\n");
 				elevatorLeftMotor->StopMotor();
 				elevatorRightMotor->StopMotor();
 			}
@@ -199,6 +213,7 @@ public:
 			float driveRotation = pow(driverController->getRightStickVector().x / 2, 2);
 
 			bool driverRightBumper = driverController->getButton(driverController->BUTTON_RIGHT_BUMPER);
+			bool driverLeftBumper = driverController->getButton(driverController->BUTTON_LEFT_BUMPER);
 
 			if(driverRightBumper){
 				float driveLockModeDifs[5];
@@ -225,6 +240,11 @@ public:
 
 			if(driverController->getRightStickVector().x < 0){
 				driveRotation *= -1;
+			}
+
+			if(driverLeftBumper){
+				printf("Dampeing");
+				driveMagnitude /= 2;
 			}
 
 			myRobot->MecanumDrive_Polar(driveMagnitude, driveAngle, driveRotation);
