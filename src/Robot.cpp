@@ -48,6 +48,9 @@ class Robot: public SampleRobot {
 	Jaguar *armsWheelLeftMotor;
 	Jaguar *armsWheelRightMotor;
 
+	DigitalInput *upperElevatorLimitSwitch;
+	DigitalInput *lowerElevatorLimitSwitch;
+
 	RobotDrive *myRobot;
 
 	float elevatorMotorSpeed = 0.8;
@@ -80,6 +83,9 @@ public:
 		armsWheelLeftMotor(new Jaguar(8)),
 		armsWheelRightMotor(new Jaguar(9)),
 
+		upperElevatorLimitSwitch(new DigitalInput(0)),
+		lowerElevatorLimitSwitch(new DigitalInput(1)),
+
 		myRobot(new RobotDrive(frontLeftDriveMotor, backLeftDriveMotor, frontRightDriveMotor, backRightDriveMotor))
 	{
 		myRobot->SetExpiration(0.1);
@@ -90,6 +96,7 @@ public:
 
 		CameraServer::GetInstance()->SetQuality(100);
 		CameraServer::GetInstance()->StartAutomaticCapture(make_shared<USBCamera>(*clawCamera));
+		//CameraServer::GetInstance()->StartAutomaticCapture("cam0");
 	}
 
 	~Robot(){
@@ -156,10 +163,10 @@ public:
 			bool clawDPadUp = clawController->getDPad(clawController->DPAD_UP);
 			bool clawDPadDown = clawController->getDPad(clawController->DPAD_DOWN);
 
-			if(clawDPadUp){
+			if(clawDPadUp && !upperElevatorLimitSwitch->Get()){
 				elevatorLeftMotor->Set(-1 *elevatorMotorSpeed);
 				elevatorRightMotor->Set(elevatorMotorSpeed);
-			} else if(clawDPadDown){
+			} else if(clawDPadDown && !lowerElevatorLimitSwitch->Get()){
 				elevatorLeftMotor->Set(elevatorMotorSpeed);
 				elevatorRightMotor->Set(-1 * elevatorMotorSpeed);
 			} else{
