@@ -93,14 +93,150 @@ public:
 		mMyRobot.SetInvertedMotor(RobotDrive::MotorType::kFrontRightMotor, true);
 		mMyRobot.SetInvertedMotor(RobotDrive::MotorType::kRearRightMotor, true);
 
-		mClawCamera.SetBrightness(10);
+		//mClawCamera.SetBrightness(10);
 
-		CameraServer::GetInstance()->SetQuality(100);
-		CameraServer::GetInstance()->StartAutomaticCapture(make_shared<USBCamera>(mClawCamera));
-		//CameraServer::GetInstance().StartAutomaticCapture("cam0");
+		//CameraServer::GetInstance()->SetQuality(100);
+		//CameraServer::GetInstance()->StartAutomaticCapture(make_shared<USBCamera>(&mClawCamera));
+		CameraServer::GetInstance()->StartAutomaticCapture();
 	}
 
 	~Robot(){}
+
+	/* Physical Mechanism Helper Methods */
+	//Elevator
+	void MoveElevator(float motorSpeed){
+		mElevatorLeftMotor.Set(-1 * motorSpeed);
+		mElevatorRightMotor.Set(motorSpeed);
+	}
+
+	bool ElevatorSafeToMove(float dir){
+		if(dir > 0){
+			return !mUpperElevatorLimitSwitch.Get();
+		} else if(dir < 0){
+			return !mLowerElevatorLimitSwitch.Get();
+		} else {
+			return !mUpperElevatorLimitSwitch.Get() && !mLowerElevatorLimitSwitch.Get();
+		}
+	}
+
+	void MoveElevatorSafeOrStop(float motorSpeed){
+		if(ElevatorSafeToMove(motorSpeed)){
+			MoveElevator(motorSpeed);
+		} else{
+			StopElevator();
+		}
+	}
+
+	void MoveElevatorForTimeSafe(float motorSpeed, float time){
+		float timeWaited = 0;
+
+		while(timeWaited <= time){
+			MoveElevatorSafeOrStop(motorSpeed);
+
+			Wait(0.01);
+			timeWaited += 10;
+		}
+	}
+
+	void MoveElevatorMaxUp(float motorSpeed){
+		MoveElevatorSafeOrStop(abs(motorSpeed));
+
+		while(!mUpperElevatorLimitSwitch.Get()){}
+
+		StopElevator();
+	}
+
+	void MoveElevatorMaxDown(float motorSpeed){
+		MoveElevatorSafeOrStop(-1 * abs(motorSpeed));
+
+		while(!mLowerElevatorLimitSwitch.Get()){}
+
+		StopElevator();
+	}
+
+	void StopElevator(){
+		mElevatorLeftMotor.StopMotor();
+		mElevatorRightMotor.StopMotor();
+	}
+
+	//Robot
+	void MoveRobot(float speed, float angle){
+		mMyRobot.MecanumDrive_Polar(speed, angle, 0);
+	}
+
+	void StopRobot(){
+		MoveRobot(0, 0);
+	}
+
+	void MoveRobotForTime(float speed, float angle, float time){
+		float totalTime = 0;
+
+		while(totalTime <= time){
+			MoveRobot(speed, angle);
+
+			Wait(10);
+			totalTime += 10;
+		}
+
+		StopRobot();
+	}
+
+	void Autonomous(){
+		/*
+		 * Auto Plan:
+		 * 		Bring claw up
+		 * 			- Picks up barrel
+		 * 		Drive forward
+		 * 		Bring claw down
+		 * 			- Releases barrel on box
+		 * 		Bring claw up
+		 * 			- Picks up box
+		 * 		Turn 90 deg
+		 * 		Go forward into auto zone
+		 */
+
+		//Bring Claw Up
+		MoveElevator(kElevatorMotorSpeed);
+		Wait(1);
+		StopElevator();
+
+		// -- We now have picked up a barrel
+
+		//Drive Forward
+		//MoveRobotForTime(0.2, 0, 2000);
+
+		// -- The barrel is now above the crate
+
+		//Bring Claw Down
+		//MoveElevatorForTimeSafe(-1 * kElevatorMotorSpeed, 900);
+
+		// -- We have now dropped the barrel on the crate
+
+		//Drive Backward
+		//MoveRobotForTime(-0.2, 0, 500);
+
+		// -- We have now cleared the claw of the crate
+
+		//Bring claw all the way down
+		//MoveElevatorMaxDown(kElevatorMotorSpeed);
+
+		// -- The claw is now in a position to pick up a crate
+
+		//Move forward
+		//MoveRobotForTime(0.2, 0, 600);
+
+		// -- The robot and the claw are now in a position to pick up the crate
+
+		//Bring claw up
+		//MoveElevatorForTimeSafe(kElevatorMotorSpeed, 1200);
+
+		// -- We now have a crate
+
+		//Stafe to auto zone
+		//MoveRobotForTime(0.5, 270, 1000);
+
+		// -- We are now in the auto zone
+	}
 
 	void OperatorControl(){
 		mDriverController.Calibrate();//Calibrate initially
@@ -143,7 +279,15 @@ public:
 			bool clawDPadUp = mClawController.GetDPad(mClawController.DPAD_UP);
 			bool clawDPadDown = mClawController.GetDPad(mClawController.DPAD_DOWN);
 
-			if(clawDPadUp && !mUpperElevatorLimitSwitch.Get()){
+			if(clawDPadUp){
+				MoveElevatorSafeOrStop(kElevatorMotorSpeed);
+			} else if(clawDPadDown){
+				MoveElevatorSafeOrStop(-1 * kElevatorMotorSpeed);
+			} else{
+				StopElevator();
+			}
+
+			/*if(clawDPadUp && !mUpperElevatorLimitSwitch.Get()){
 				mElevatorLeftMotor.Set(-1 *kElevatorMotorSpeed);
 				mElevatorRightMotor.Set(kElevatorMotorSpeed);
 			} else if(clawDPadDown && !mLowerElevatorLimitSwitch.Get()){
@@ -152,10 +296,14 @@ public:
 			} else{
 				mElevatorLeftMotor.StopMotor();
 				mElevatorRightMotor.StopMotor();
-			}
+			}*/
 
+
+			/////////////////////////////////////////////////////
+			///     AT THIS TIME WE ARE NOT USING THE ARMS    ///
+			/////////////////////////////////////////////////////
 			//Arms control
-			bool clawDPadLeft = mClawController.GetDPad(mClawController.DPAD_LEFT);
+			/*bool clawDPadLeft = mClawController.GetDPad(mClawController.DPAD_LEFT);
 			bool clawDPadRight = mClawController.GetDPad(mClawController.DPAD_RIGHT);
 
 			if(clawDPadLeft){
@@ -167,10 +315,10 @@ public:
 			} else{
 				mArmsLeftMotor.StopMotor();
 				mArmsRightMotor.StopMotor();
-			}
+			}*/
 
 			//Arms wheel control
-			bool clawLeftBumper = mClawController.GetButton(mClawController.BUTTON_LEFT_BUMPER);
+			/*bool clawLeftBumper = mClawController.GetButton(mClawController.BUTTON_LEFT_BUMPER);
 			bool clawRightBumper = mClawController.GetButton(mClawController.BUTTON_RIGHT_BUMPER);
 
 			bool clawLeftTrigger = mClawController.GetButton(mClawController.BUTTON_LEFT_TRIGGER);
@@ -190,7 +338,7 @@ public:
 				mArmsWheelRightMotor.Set(-1 * kArmsWheelMotorSpeed);
 			} else {
 				mArmsWheelRightMotor.Set(0);
-			}
+			}*/
 
 			//Drive robot
 			PolarCoord driverLeftStick = mDriverController.GetLeftStickPolar();
@@ -231,7 +379,7 @@ public:
 
 			if(driverLeftBumper){
 				printf("Dampeing");
-				driveMagnitude /= 2;
+				driveMagnitude = driveMagnitude / 2;
 			}
 
 			mMyRobot.MecanumDrive_Polar(driveMagnitude, driveAngle, driveRotation);
@@ -240,6 +388,8 @@ public:
 			Wait(0.005);//wait for a motor update time
 		}
 	}
+
+	void Disabled(){}
 
 };
 
