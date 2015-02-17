@@ -1,5 +1,5 @@
-#ifndef ANGLE_HEADER_GUARD
-#define ANGLE_HEADER_GUARD
+#ifndef FRC15_ANGLE_H
+#define FRC15_ANGLE_H
 
 #include <math.h>
 
@@ -7,24 +7,10 @@ struct Angle{
 	float angle;
 
 	Angle(float angle){
-		set(angle);
+		Set(angle);
 	}
 
-	Angle operator = (Angle angle){
-		Angle::set(angle.angle);
-		return Angle(angle);
-	}
-
-	Angle operator = (float angle){
-		Angle::set(angle);
-		return Angle(angle);
-	}
-
-	operator float(){
-		return Angle::angle;
-	}
-
-	void set(float angle){
+	void Set(float angle){
 		if(angle < 0){
 			while(angle < 0){
 				angle += 360;

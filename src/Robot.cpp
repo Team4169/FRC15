@@ -26,208 +26,188 @@ class Robot: public SampleRobot {
 	 * 			9    - Right arm wheel motor
 	 */
 
-	USBCamera *clawCamera;
+	USBCamera mClawCamera;
 
-	Joystick driverJoystick;
-	Joystick clawJoystick;
+	Joystick mDriverJoystick;
+	Joystick mClawJoystick;
 
-	XBoxController *driverController;
-	XBoxController *clawController;
+	XBoxController mDriverController;
+	XBoxController mClawController;
 
-	Victor *frontLeftDriveMotor;
-	Victor *backLeftDriveMotor;
-	Victor *frontRightDriveMotor;
-	Victor *backRightDriveMotor;
+	Victor mFrontLeftDriveMotor;
+	Victor mBackLeftDriveMotor;
+	Victor mFrontRightDriveMotor;
+	Victor mBackRightDriveMotor;
 
-	Victor *elevatorLeftMotor;
-	Victor *elevatorRightMotor;
+	Victor mElevatorLeftMotor;
+	Victor mElevatorRightMotor;
 
-	Jaguar *armsLeftMotor;
-	Jaguar *armsRightMotor;
+	Jaguar mArmsLeftMotor;
+	Jaguar mArmsRightMotor;
 
-	Jaguar *armsWheelLeftMotor;
-	Jaguar *armsWheelRightMotor;
+	Jaguar mArmsWheelLeftMotor;
+	Jaguar mArmsWheelRightMotor;
 
-	DigitalInput *upperElevatorLimitSwitch;
-	DigitalInput *lowerElevatorLimitSwitch;
+	DigitalInput mUpperElevatorLimitSwitch;
+	DigitalInput mLowerElevatorLimitSwitch;
 
-	RobotDrive *myRobot;
+	RobotDrive mMyRobot;
 
-	float elevatorMotorSpeed = 0.8;
-	float armsMotorSpeed = 0.15;
-	float armsWheelMotorSpeed = 0.25;
+	float kElevatorMotorSpeed = 0.8;
+	float kArmsMotorSpeed = 0.15;
+	float kArmsWheelMotorSpeed = 0.25;
 
-	float driveLockModeValues[5] {0, 90, 180, 270, 360};
+	float kDriveLockModeValues[5] {0, 90, 180, 270, 360};
+
 
 public:
 	Robot():
-		clawCamera(new USBCamera(USBCamera::kDefaultCameraName, false)),
+		mClawCamera(USBCamera::kDefaultCameraName, false),
 
-		driverJoystick(0),
-		clawJoystick(1),
+		mDriverJoystick(0),
+		mClawJoystick(1),
 
-		driverController(new XBoxController(&driverJoystick)),
-		clawController(new XBoxController(&clawJoystick)),
+		mDriverController(&mDriverJoystick),
+		mClawController(&mClawJoystick),
 
-		frontLeftDriveMotor(new Victor(0)),
-		backLeftDriveMotor(new Victor(1)),
-		frontRightDriveMotor(new Victor(2)),
-		backRightDriveMotor(new Victor(3)),
+		mFrontLeftDriveMotor(0),
+		mBackLeftDriveMotor(1),
+		mFrontRightDriveMotor(2),
+		mBackRightDriveMotor(3),
 
-		elevatorLeftMotor(new Victor(4)),
-		elevatorRightMotor(new Victor(5)),
+		mElevatorLeftMotor(4),
+		mElevatorRightMotor(5),
 
-		armsLeftMotor(new Jaguar(6)),
-		armsRightMotor(new Jaguar(7)),
+		mArmsLeftMotor(6),
+		mArmsRightMotor(7),
 
-		armsWheelLeftMotor(new Jaguar(8)),
-		armsWheelRightMotor(new Jaguar(9)),
+		mArmsWheelLeftMotor(8),
+		mArmsWheelRightMotor(9),
 
-		upperElevatorLimitSwitch(new DigitalInput(0)),
-		lowerElevatorLimitSwitch(new DigitalInput(1)),
+		mUpperElevatorLimitSwitch(0),
+		mLowerElevatorLimitSwitch(1),
 
-		myRobot(new RobotDrive(frontLeftDriveMotor, backLeftDriveMotor, frontRightDriveMotor, backRightDriveMotor))
+		mMyRobot(mFrontLeftDriveMotor, mBackLeftDriveMotor, mFrontRightDriveMotor, mBackRightDriveMotor)
 	{
-		myRobot->SetExpiration(0.1);
-		myRobot->SetInvertedMotor(RobotDrive::MotorType::kFrontRightMotor, true);
-		myRobot->SetInvertedMotor(RobotDrive::MotorType::kRearRightMotor, true);
+		mMyRobot.SetExpiration(0.1);
+		mMyRobot.SetInvertedMotor(RobotDrive::MotorType::kFrontRightMotor, true);
+		mMyRobot.SetInvertedMotor(RobotDrive::MotorType::kRearRightMotor, true);
 
-		clawCamera->SetBrightness(10);
+		mClawCamera.SetBrightness(10);
 
 		CameraServer::GetInstance()->SetQuality(100);
-		CameraServer::GetInstance()->StartAutomaticCapture(make_shared<USBCamera>(*clawCamera));
-		//CameraServer::GetInstance()->StartAutomaticCapture("cam0");
+		CameraServer::GetInstance()->StartAutomaticCapture(make_shared<USBCamera>(mClawCamera));
+		//CameraServer::GetInstance().StartAutomaticCapture("cam0");
 	}
 
-	~Robot(){
-		delete clawCamera;
-
-		delete driverController;
-		delete clawController;
-
-		delete elevatorLeftMotor;
-		delete elevatorRightMotor;
-
-		delete armsLeftMotor;
-		delete armsRightMotor;
-
-		delete armsWheelLeftMotor;
-		delete armsWheelRightMotor;
-
-		delete frontLeftDriveMotor;
-		delete frontRightDriveMotor;
-		delete backLeftDriveMotor;
-		delete backRightDriveMotor;
-
-		delete myRobot;
-	}
+	~Robot(){}
 
 	void OperatorControl(){
-		driverController->calibrate();//Calibrate initially
+		mDriverController.Calibrate();//Calibrate initially
 
 		while (IsOperatorControl() && IsEnabled()){
 
 			//Recalibrate if the Start button is pressed
-			if(driverController->getButton(driverController->BUTTON_START)){
-				driverController->calibrate();
+			if(mDriverController.GetButton(mDriverController.BUTTON_START)){
+				mDriverController.Calibrate();
 			}
 
-			if(clawController->getButton(clawController->BUTTON_START)){
-				clawController->calibrate();
+			if(mClawController.GetButton(mClawController.BUTTON_START)){
+				mClawController.Calibrate();
 			}
 
 			//Vibrator Controller
-			bool driverBackButton = driverController->getButton(driverController->BUTTON_BACK);
-			bool driverAButton = driverController->getButton(driverController->BUTTON_A);
+			bool driverBackButton = mDriverController.GetButton(mDriverController.BUTTON_BACK);
+			bool driverAButton = mDriverController.GetButton(mDriverController.BUTTON_A);
 
-			bool clawBackButton = clawController->getButton(clawController->BUTTON_BACK);
-			bool clawAButton = clawController->getButton(clawController->BUTTON_A);
+			bool clawBackButton = mClawController.GetButton(mClawController.BUTTON_BACK);
+			bool clawAButton = mClawController.GetButton(mClawController.BUTTON_A);
 
 			if(driverBackButton || clawAButton){
-				driverController->rumbleLeft(1);
-				driverController->rumbleRight(1);
+				mDriverController.RumbleLeft(1);
+				mDriverController.RumbleRight(1);
 			} else {
-				driverController->rumbleLeft(0);
-				driverController->rumbleRight(0);
+				mDriverController.RumbleLeft(0);
+				mDriverController.RumbleRight(0);
 			}
 
 			if(clawBackButton || driverAButton){
-				clawController->rumbleLeft(1);
-				clawController->rumbleRight(1);
+				mClawController.RumbleLeft(1);
+				mClawController.RumbleRight(1);
 			} else {
-				clawController->rumbleLeft(0);
-				clawController->rumbleRight(0);
+				mClawController.RumbleLeft(0);
+				mClawController.RumbleRight(0);
 			}
 
 			//Elevator control
-			bool clawDPadUp = clawController->getDPad(clawController->DPAD_UP);
-			bool clawDPadDown = clawController->getDPad(clawController->DPAD_DOWN);
+			bool clawDPadUp = mClawController.GetDPad(mClawController.DPAD_UP);
+			bool clawDPadDown = mClawController.GetDPad(mClawController.DPAD_DOWN);
 
-			if(clawDPadUp && !upperElevatorLimitSwitch->Get()){
-				elevatorLeftMotor->Set(-1 *elevatorMotorSpeed);
-				elevatorRightMotor->Set(elevatorMotorSpeed);
-			} else if(clawDPadDown && !lowerElevatorLimitSwitch->Get()){
-				elevatorLeftMotor->Set(elevatorMotorSpeed);
-				elevatorRightMotor->Set(-1 * elevatorMotorSpeed);
+			if(clawDPadUp && !mUpperElevatorLimitSwitch.Get()){
+				mElevatorLeftMotor.Set(-1 *kElevatorMotorSpeed);
+				mElevatorRightMotor.Set(kElevatorMotorSpeed);
+			} else if(clawDPadDown && !mLowerElevatorLimitSwitch.Get()){
+				mElevatorLeftMotor.Set(kElevatorMotorSpeed);
+				mElevatorRightMotor.Set(-1 * kElevatorMotorSpeed);
 			} else{
-				elevatorLeftMotor->StopMotor();
-				elevatorRightMotor->StopMotor();
+				mElevatorLeftMotor.StopMotor();
+				mElevatorRightMotor.StopMotor();
 			}
 
 			//Arms control
-			bool clawDPadLeft = clawController->getDPad(clawController->DPAD_LEFT);
-			bool clawDPadRight = clawController->getDPad(clawController->DPAD_RIGHT);
+			bool clawDPadLeft = mClawController.GetDPad(mClawController.DPAD_LEFT);
+			bool clawDPadRight = mClawController.GetDPad(mClawController.DPAD_RIGHT);
 
 			if(clawDPadLeft){
-				armsLeftMotor->Set(-1 * armsMotorSpeed);
-				armsRightMotor->Set(armsMotorSpeed);
+				mArmsLeftMotor.Set(-1 * kArmsMotorSpeed);
+				mArmsRightMotor.Set(kArmsMotorSpeed);
 			} else if(clawDPadRight){
-				armsLeftMotor->Set(armsMotorSpeed);
-				armsRightMotor->Set(-1 * armsMotorSpeed);
+				mArmsLeftMotor.Set(kArmsMotorSpeed);
+				mArmsRightMotor.Set(-1 * kArmsMotorSpeed);
 			} else{
-				armsLeftMotor->StopMotor();
-				armsRightMotor->StopMotor();
+				mArmsLeftMotor.StopMotor();
+				mArmsRightMotor.StopMotor();
 			}
 
 			//Arms wheel control
-			bool clawLeftBumper = clawController->getButton(clawController->BUTTON_LEFT_BUMPER);
-			bool clawRightBumper = clawController->getButton(clawController->BUTTON_RIGHT_BUMPER);
+			bool clawLeftBumper = mClawController.GetButton(mClawController.BUTTON_LEFT_BUMPER);
+			bool clawRightBumper = mClawController.GetButton(mClawController.BUTTON_RIGHT_BUMPER);
 
-			bool clawLeftTrigger = clawController->getButton(clawController->BUTTON_LEFT_TRIGGER);
-			bool clawRightTrigger = clawController->getButton(clawController->BUTTON_RIGHT_TRIGGER);
+			bool clawLeftTrigger = mClawController.GetButton(mClawController.BUTTON_LEFT_TRIGGER);
+			bool clawRightTrigger = mClawController.GetButton(mClawController.BUTTON_RIGHT_TRIGGER);
 
 			if(clawLeftBumper && !clawLeftTrigger){
-				armsWheelLeftMotor->Set(armsWheelMotorSpeed);
+				mArmsWheelLeftMotor.Set(kArmsWheelMotorSpeed);
 			} else if(!clawLeftBumper && clawLeftTrigger){
-				armsWheelLeftMotor->Set(-1 * armsWheelMotorSpeed);
+				mArmsWheelLeftMotor.Set(-1 * kArmsWheelMotorSpeed);
 			} else {
-				armsWheelLeftMotor->Set(0);
+				mArmsWheelLeftMotor.Set(0);
 			}
 
 			if(clawRightBumper && !clawRightTrigger){
-				armsWheelRightMotor->Set(armsWheelMotorSpeed);
+				mArmsWheelRightMotor.Set(kArmsWheelMotorSpeed);
 			} else if(!clawRightBumper && clawRightTrigger){
-				armsWheelRightMotor->Set(-1 * armsWheelMotorSpeed);
+				mArmsWheelRightMotor.Set(-1 * kArmsWheelMotorSpeed);
 			} else {
-				armsWheelRightMotor->Set(0);
+				mArmsWheelRightMotor.Set(0);
 			}
 
 			//Drive robot
-			PolarCoord driverLeftStick = driverController->getLeftStickPolar();
+			PolarCoord driverLeftStick = mDriverController.GetLeftStickPolar();
 
 			float driveMagnitude = pow(driverLeftStick.magnitude, 2.0);
-			float driveAngle = driverLeftStick.angle;
-			float driveRotation = pow(driverController->getRightStickVector().x / 2, 2);
+			float driveAngle = driverLeftStick.angle.angle;
+			float driveRotation = pow(mDriverController.GetRightStickVector().x / 2, 2);
 
-			bool driverRightBumper = driverController->getButton(driverController->BUTTON_RIGHT_BUMPER);
-			bool driverLeftBumper = driverController->getButton(driverController->BUTTON_LEFT_BUMPER);
+			bool driverRightBumper = mDriverController.GetButton(mDriverController.BUTTON_RIGHT_BUMPER);
+			bool driverLeftBumper = mDriverController.GetButton(mDriverController.BUTTON_LEFT_BUMPER);
 
 			if(driverRightBumper){
 				float driveLockModeDifs[5];
 
 				int i = 0;
-				for(float lockModeValue : driveLockModeValues){
-					driveLockModeDifs[i] = abs(driverLeftStick.angle - lockModeValue);
+				for(float lockModeValue : kDriveLockModeValues){
+					driveLockModeDifs[i] = abs(driverLeftStick.angle.angle - lockModeValue);
 
 					i++;
 				}
@@ -242,10 +222,10 @@ public:
 					i++;
 				}
 
-				driveAngle = driveLockModeValues[lowestDifIndex];
+				driveAngle = kDriveLockModeValues[lowestDifIndex];
 			}
 
-			if(driverController->getRightStickVector().x < 0){
+			if(mDriverController.GetRightStickVector().x < 0){
 				driveRotation *= -1;
 			}
 
@@ -254,7 +234,7 @@ public:
 				driveMagnitude /= 2;
 			}
 
-			myRobot->MecanumDrive_Polar(driveMagnitude, driveAngle, driveRotation);
+			mMyRobot.MecanumDrive_Polar(driveMagnitude, driveAngle, driveRotation);
 			//                              magnitude,  direction,      rotation
 
 			Wait(0.005);//wait for a motor update time

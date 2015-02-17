@@ -1,5 +1,5 @@
-#ifndef POLAR_COORD_HEADER_GUARD
-#define POLAR_COORD_HEADER_GUARD
+#ifndef FRC15_POLAR_COORD_H
+#define FRC15_POLAR_COORD_H
 
 #include "Vector2.h"
 #include "Math.h"

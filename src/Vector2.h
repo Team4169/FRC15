@@ -1,5 +1,5 @@
-#ifndef VECTOR2_HEADER_GUARD
-#define VECTOR2_HEADER_GUARD
+#ifndef FRC15_VECTOR2_H
+#define FRC15_VECTOR2_H
 
 struct Vector2 {
 	float x;

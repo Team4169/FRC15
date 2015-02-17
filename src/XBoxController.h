@@ -1,5 +1,5 @@
-#ifndef XBOX_CONTROLLER_HEADER_GUARD
-#define XBOX_CONTROLLER_HEADER_GUARD
+#ifndef FRC15_XBOX_CONTROLLER_H
+#define FRC15_XBOX_CONTROLLER_H
 
 #include "WPILib.h"
 #include "Vector2.h"
@@ -12,7 +12,7 @@
  */
 class XBoxController {
 private:
-	Joystick *joystick;///< The WPILib Joystick to get input from
+	Joystick *mJoystick;///< The WPILib Joystick to get input from
 
     /** @defgroup Axis offsets
     * Each axis on the XBox controller starts half engaged. The range is 0f-1f, when retrieving the raw axis value
@@ -23,11 +23,11 @@ private:
     * with wandering values.
     * @{
     */
-	float leftStickXOffset;///< Left stick x axis offset
-	float leftStickYOffset;///< Left stick y axis offset
+	float mLeftStickXOffset;///< Left stick x axis offset
+	float mLeftStickYOffset;///< Left stick y axis offset
 
-	float rightStickXOffset;///< Right stick x axis offset
-	float rightStickYOffset;///< Right stick y axis offset
+	float mRightStickXOffset;///< Right stick x axis offset
+	float mRightStickYOffset;///< Right stick y axis offset
 
     /** @defgroup Trigger axis offsets
     * The triggers on a XBox controller a treated like axises. Their values range from 0f-1f and start at 0.5f similar to
@@ -36,8 +36,8 @@ private:
     * This is because the triggers are actually hooked up to potentiometer that measures how pressed down they are.
     * @{
     */
-	float leftTriggerOffset;///< Left trigger axis offset
-	float rightTriggerOffset;///< Right trigger axis offset
+	float mLeftTriggerOffset;///< Left trigger axis offset
+	float mRightTriggerOffset;///< Right trigger axis offset
     /** @} */
     /** @} */
 
@@ -46,19 +46,19 @@ private:
     * axis id. The following are the axis ids for the XBox controller.
     * @{
     */
-	int leftStickXId;///< Left stick x axis id
-	int leftStickYId;///< Left stick y axis id
+	int mLeftStickXId;///< Left stick x axis id
+	int mLeftStickYId;///< Left stick y axis id
 
-	int rightStickXId;///< Right stick x axis id
-	int rightStickYId;///< Right stick y axis id
+	int mRightStickXId;///< Right stick x axis id
+	int mRightStickYId;///< Right stick y axis id
 
     /** @defgroup Trigger axis ids
     * Triggers are treated as axises, to get their values you must use the same technique as is used to get joystick
     * axises.
     * @{
     */
-	int leftTriggerId;///< Left trigger axis id
-	int rightTriggerId;///< Right trigger axis id
+	int mLeftTriggerId;///< Left trigger axis id
+	int mRightTriggerId;///< Right trigger axis id
     /** @}
     /** @} */
 
@@ -68,8 +68,8 @@ private:
     * is over a certain threshold.
     * @{
     */
-	float leftTriggerButtonThreshold;///< Left trigger button pressed threshold
-	float rightTriggerButtonThreshold;///< Right trigger button pressed threshold
+	float mLeftTriggerButtonThreshold;///< Left trigger button pressed threshold
+	float mRightTriggerButtonThreshold;///< Right trigger button pressed threshold
     /** @} */
 
 public:
@@ -155,7 +155,7 @@ public:
     * their center point. This can mess up the values significantly, so make sure to tell your drives not to press
     * forward on the axises when they are being calibrated.
     */
-	void calibrate();
+	void Calibrate();
 
     /**
     * @brief Gets the specified button
@@ -169,14 +169,14 @@ public:
     * @param buttonId The button id of the requested button
     * @return true if the button is pressed, and false if the button is not
     */
-	bool getButton(int buttonId);
+	bool GetButton(int buttonId);
 
     /**
     * Gets the specified DPad direction
     * @param DpadId The id of the DPad direction
     * @return true if the DPad direction is pressed, and false if it is not
     */
-	bool getDPad(int DpadId);
+	bool GetDPad(int DpadId);
 
     /** @defgroup Rumble motors
     * Starts the left rumble motor on the controller.
@@ -186,8 +186,8 @@ public:
     * @param value The power of the rumble on a scale from 0f-1f
     * @{
     */
-	void rumbleLeft(float value);///< Starts the left rumble motor
-	void rumbleRight(float value);///< Starts the right rumble motor
+	void RumbleLeft(float value);///< Starts the left rumble motor
+	void RumbleRight(float value);///< Starts the right rumble motor
     /** @} */
 
     /**
@@ -202,20 +202,20 @@ public:
     *
     * @return A Vector2 of the joystick value(x, y) with the offsets applied
     */
-	Vector2 getStick(int xId, int yId, float xOffset, float yOffset);
+	Vector2 GetStick(int xId, int yId, float xOffset, float yOffset);
 
 	/** @defgroup Get controller joystick values
 	 * @{
 	 */
-	Vector2 getRightStickVector();
-	Vector2 getLeftStickVector();
+	Vector2 GetRightStickVector();
+	Vector2 GetLeftStickVector();
 
-	PolarCoord getRightStickPolar();
-	PolarCoord getLeftStickPolar();
+	PolarCoord GetRightStickPolar();
+	PolarCoord GetLeftStickPolar();
 	/** @} */
 
-	float getLeftTrigger();
-	float getRightTrigger();
+	float GetLeftTrigger();
+	float GetRightTrigger();
 };
 
 #endif
