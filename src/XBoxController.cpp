@@ -1,8 +1,5 @@
 #include "XBoxController.h"
 
-/* Initialize Static Constants */
-
-
 XBoxController::XBoxController(Joystick *joystick): joystick(joystick){
 	/* Joysticks */
 	leftStickXOffset = 0.5;
@@ -45,13 +42,17 @@ XBoxController::XBoxController(Joystick *joystick): joystick(joystick){
 	BUTTON_START = 8;
 
 	DPAD_UP = 0;
-	DPAD_UP_RIGHT = 1;
-	DPAD_RIGHT = 2;
-	DPAD_DOWN_RIGHT = 3;
-	DPAD_DOWN = 4;
-	DPAD_DOWN_LEFT = 5;
-	DPAD_LEFT = 6;
-	DPAD_UP_LEFT = 7;
+	DPAD_UP_RIGHT = 45;
+	DPAD_RIGHT = 90;
+	DPAD_DOWN_RIGHT = 135;
+	DPAD_DOWN = 180;
+	DPAD_DOWN_LEFT = 225;
+	DPAD_LEFT = 270;
+	DPAD_UP_LEFT = 315;
+}
+
+XBoxController::~XBoxController(){
+	delete joystick;
 }
 
 void XBoxController::calibrate(){
@@ -82,7 +83,7 @@ bool XBoxController::getButton(int buttonId){
 }
 
 bool XBoxController::getDPad(int DPadId){
-	return joystick->GetPOV(DPadId);
+	return DPadId == joystick->GetPOV();
 }
 
 void XBoxController::rumbleLeft(float value){
