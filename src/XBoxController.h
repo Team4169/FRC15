@@ -214,8 +214,14 @@ public:
 	PolarCoord GetLeftStickPolar();
 	/** @} */
 
+	/** @defgroup Get controller triggers
+	 * These methods treat the trigger like an axis. A value between 0f-1f will be
+	 * returned. These methods also apply the trigger offset to the values
+	 * @{
+	 */
 	float GetLeftTrigger();
 	float GetRightTrigger();
+	/** @} */
 };
 
 #endif

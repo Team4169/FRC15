@@ -56,6 +56,7 @@ class Robot: public SampleRobot {
 	float kElevatorMotorSpeed = 0.8;
 	float kArmsMotorSpeed = 0.15;
 	float kArmsWheelMotorSpeed = 0.25;
+	float kMoveForTimeWaitInterval = 0.005;
 
 	float kDriveLockModeValues[5] {0, 90, 180, 270, 360};
 
@@ -133,8 +134,8 @@ public:
 		while(timeWaited <= time){
 			MoveElevatorSafeOrStop(motorSpeed);
 
-			Wait(0.01);
-			timeWaited += 10;
+			Wait(kMoveForTimeWaitInterval);
+			timeWaited += kMoveForTimeWaitInterval;
 		}
 	}
 
@@ -171,71 +172,40 @@ public:
 	void MoveRobotForTime(float speed, float angle, float time){
 		float totalTime = 0;
 
-		while(totalTime <= time){
+		while(totalTime < time){
 			MoveRobot(speed, angle);
 
-			Wait(10);
-			totalTime += 10;
+			Wait(kMoveForTimeWaitInterval);
+			totalTime += kMoveForTimeWaitInterval;
 		}
 
 		StopRobot();
 	}
 
 	void Autonomous(){
-		/*
-		 * Auto Plan:
-		 * 		Bring claw up
-		 * 			- Picks up barrel
-		 * 		Drive forward
-		 * 		Bring claw down
-		 * 			- Releases barrel on box
-		 * 		Bring claw up
-		 * 			- Picks up box
-		 * 		Turn 90 deg
-		 * 		Go forward into auto zone
-		 */
+		//Pick up barrel
+		MoveElevatorForTimeSafe(kElevatorMotorSpeed, 1);
 
-		//Bring Claw Up
-		MoveElevator(kElevatorMotorSpeed);
-		Wait(1);
-		StopElevator();
+		//Move forward to put on top of tote
+		MoveRobotForTime(0.5, 0, 1000);
 
-		// -- We now have picked up a barrel
+		//Lower claw half way
+		MoveElevatorForTimeSafe(kElevatorMotorSpeed, 0.5);
 
-		//Drive Forward
-		//MoveRobotForTime(0.2, 0, 2000);
+		//Backup
+		MoveRobotForTime(-0.5, 0, 1000);
 
-		// -- The barrel is now above the crate
-
-		//Bring Claw Down
-		//MoveElevatorForTimeSafe(-1 * kElevatorMotorSpeed, 900);
-
-		// -- We have now dropped the barrel on the crate
-
-		//Drive Backward
-		//MoveRobotForTime(-0.2, 0, 500);
-
-		// -- We have now cleared the claw of the crate
-
-		//Bring claw all the way down
-		//MoveElevatorMaxDown(kElevatorMotorSpeed);
-
-		// -- The claw is now in a position to pick up a crate
+		//Lower claw all the way
+		MoveElevatorMaxDown(kElevatorMotorSpeed);
 
 		//Move forward
-		//MoveRobotForTime(0.2, 0, 600);
+		MoveRobotForTime(0.5, 0, 500);
 
-		// -- The robot and the claw are now in a position to pick up the crate
+		//Pickup tote and barrel
+		MoveElevatorForTimeSafe(kElevatorMotorSpeed, 1);
 
-		//Bring claw up
-		//MoveElevatorForTimeSafe(kElevatorMotorSpeed, 1200);
-
-		// -- We now have a crate
-
-		//Stafe to auto zone
-		//MoveRobotForTime(0.5, 270, 1000);
-
-		// -- We are now in the auto zone
+		//Move into auto zone
+		MoveRobotForTime(0.5, 0, 2000);
 	}
 
 	void OperatorControl(){

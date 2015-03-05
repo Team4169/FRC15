@@ -3,6 +3,10 @@
 
 #include <math.h>
 
+/**
+ * The Angle struct provides an interface for storing angles. At the most basic level
+ * the anngle struct stores the angle in
+ */
 struct Angle{
 	float angle;
 
