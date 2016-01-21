@@ -20,4 +20,12 @@
 //const int RANGE_FINDER_PORT = 1;
 //const int RANGE_FINDER_MODULE = 1;
 
+const int FRONT_LEFT_MOTOR = 0;
+const int BACK_LEFT_MOTOR = 1;
+const int FRONT_RIGHT_MOTOR = 2;
+const int BACK_RIGHT_MOTOR = 3;
+
+
+
+
 #endif
