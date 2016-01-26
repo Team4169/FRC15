@@ -7,12 +7,11 @@
 #include "ExampleSubsystem.h"
 #include "../RobotMap.h"
 
-MecanumDrive::MecanumDrive(RobotDrive robot) :Subsystem("MecanumDrive"){
+MecanumDrive::MecanumDrive(RobotDrive robot): Subsystem("MecanumDrive"){
 	rob=robot;
 }
 
-void MecanumDrive::InitDefaultCommand()
-{
+void MecanumDrive::InitDefaultCommand(){
 	// Set the default command for a subsystem here.
 	//SetDefaultCommand(new MySpecialCommand());
 }
@@ -22,7 +21,3 @@ void MecanumDrive::InitDefaultCommand()
 void MecanumDrive::move(float speed, float direction){
 	rob.MecanumDrive_Polar(speed, direction, 0);
 }
-
-
-
-
